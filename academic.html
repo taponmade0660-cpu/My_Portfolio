@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styling.css">
+</head>
+<body>
+     <header>
+        <h1>My Portfolio</h1>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="about.html">ABOUT ME</a></li>
+                <li><a href="projects.html">PROJECTS</a></li>
+                <li><a href="academic.html">ACADEMIC PLANNER</a></li>
+                <li><a href="contact.html">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="academic">
+    <h1>ACADEMIC PLANNER</h1>
+     <p>Organise your academic activities and manage your time effectively.</p>
+
+    <hr>
+
+    <h2>Add New Academic Task</h2>
+
+    <form id="taskForm">
+
+        <label for="task">Task Name:</label><br>
+        <input type="text" id="task" placeholder="Enter your task" required>
+        <br><br>
+
+        <label for="deadline">Deadline:</label><br>
+        <input type="date" id="deadline" required>
+        <br><br>
+
+        <label for="priority">Priority:</label><br>
+        <select id="priority">
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Add Task</button>
+
+    </form>
+
+    <hr>
+
+    <h2>My Academic Tasks</h2>
+
+    <p>Total Tasks: <span id="total">0</span></p>
+    <p>Pending Tasks: <span id="pending">0</span></p>
+    <p>Completed Tasks: <span id="completed">0</span></p>
+
+    <ul id="taskList"></ul>
+
+    <script>
+
+        let tasks = JSON.parse(
+            localStorage.getItem("academicTasks")
+        ) || [];
+
+        const taskForm = document.getElementById("taskForm");
+        const taskList = document.getElementById("taskList");
+
+        function saveTasks() {
+            localStorage.setItem(
+                "academicTasks",
+                JSON.stringify(tasks)
+            );
+        }
+
+        function displayTasks() {
+
+            taskList.innerHTML = "";
+
+            tasks.forEach(function(task) {
+
+                let li = document.createElement("li");
+
+                li.textContent =
+                    task.name +
+                    " | Deadline: " + task.deadline +
+                    " | Priority: " + task.priority +
+                    " | Status: " +
+                    (task.completed ? "Completed" : "Pending");
+
+                let completeButton =
+                    document.createElement("button");
+
+                completeButton.textContent =
+                    task.completed ? "Undo" : "Complete";
+
+                completeButton.onclick = function() {
+                    task.completed = !task.completed;
+                    saveTasks();
+                    displayTasks();
+                };
+
+                let deleteButton =
+                    document.createElement("button");
+
+                deleteButton.textContent = "Delete";
+
+                deleteButton.onclick = function() {
+                    tasks = tasks.filter(function(t) {
+                        return t.id !== task.id;
+                    });
+
+                    saveTasks();
+                    displayTasks();
+                };
+
+                li.appendChild(document.createTextNode(" "));
+                li.appendChild(completeButton);
+                li.appendChild(deleteButton);
+
+                taskList.appendChild(li);
+
+            });
+
+            updateStatistics();
+        }
+
+        taskForm.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            let taskName =
+                document.getElementById("task").value.trim();
+
+            let deadline =
+                document.getElementById("deadline").value;
+
+            let priority =
+                document.getElementById("priority").value;
+
+            if (taskName === "" || deadline === "") {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            let newTask = {
+                id: Date.now(),
+                name: taskName,
+                deadline: deadline,
+                priority: priority,
+                completed: false
+            };
+
+            tasks.push(newTask);
+
+            saveTasks();
+            displayTasks();
+
+            taskForm.reset();
+
+        });
+
+        function updateStatistics() {
+
+            document.getElementById("total").textContent =
+                tasks.length;
+
+            document.getElementById("pending").textContent =
+                tasks.filter(function(task) {
+                    return !task.completed;
+                }).length;
+
+            document.getElementById("completed").textContent =
+                tasks.filter(function(task) {
+                    return task.completed;
+                }).length;
+
+        }
+
+        displayTasks();
+
+    </script>
+    
+    
+</body>
+</html>

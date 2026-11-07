@@ -1,0 +1,30 @@
+header{
+    padding: 20;
+    margin: 0;
+    color: rgb(83, 27, 13);
+    background-color: goldenrod;
+    text-align: center;
+    text-decoration: solid;
+}
+body{
+    margin: 30;
+    padding: 20;
+    text-align: center;
+    background-color: rgb(223, 196, 140);
+    font-size: larger;
+    font-weight: bold;
+    font-style: normal;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+li{
+    display: inline-block;
+    margin-right: 20px;
+}
+nav li{
+list-style: none;
+padding: 0;
+}
+
+nav ul li *{
+color: whitesmoke;
+}
